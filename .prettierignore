@@ -1,0 +1,7 @@
+dist
+android
+coverage
+playwright-report
+test-results
+pnpm-lock.yaml
+src/services/puzzles/*.json

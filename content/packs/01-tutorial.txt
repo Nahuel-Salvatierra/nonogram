@@ -1,0 +1,42 @@
+pack: tutorial
+title: Primeros pasos
+
+puzzle: plus
+name: Cruz
+..#..
+..#..
+#####
+..#..
+..#..
+
+puzzle: heart
+name: Corazón
+.#.#.
+#####
+#####
+.###.
+..#..
+
+puzzle: house
+name: Casa
+..#..
+.###.
+#####
+.#.#.
+.#.#.
+
+puzzle: arrow
+name: Flecha
+..#..
+.###.
+#.#.#
+..#..
+..#..
+
+puzzle: face
+name: Cara
+.###.
+#.#.#
+#####
+#...#
+.###.

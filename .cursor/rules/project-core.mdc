@@ -1,0 +1,39 @@
+---
+description: Core project standards (language, typing, simplicity, comments, dependencies, commits)
+alwaysApply: true
+---
+
+# Project Core
+
+## Language
+- All code is English: identifiers, files, folders, tests, commits, branch names.
+- User-facing text is Spanish and lives only in `src/ui/strings/es.ts` (English keys). Never hardcode UI text in JSX.
+
+```tsx
+// BAD
+<button>Nueva partida</button>
+// GOOD
+<button>{strings.home.newGame}</button>
+```
+
+## Typing
+- Strict TypeScript. `any` and `unknown` are forbidden.
+- External JSON (persistence) is validated with Zod; types are inferred from schemas. Never cast `JSON.parse`.
+
+## Simplicity
+- KISS and YAGNI: implement only what the ticket and current plan phase require.
+- DRY with judgment: extract on the third repetition or when it is a domain concept. No speculative abstractions.
+- Small single-purpose functions. Prefer pure functions and immutable data.
+
+## Comments and logs
+- No comments unless they state a non-obvious constraint.
+- No `console.*`. Never delete existing comments or logs unless asked.
+
+## Dependencies
+- Do not add a dependency without justifying it in the ticket/PR. Prefer the platform and existing deps.
+
+## Commits
+- Conventional Commits in English: `feat(engine): add probing`, `fix(ui): lock stroke axis on drag`.
+
+## Done
+- Run `pnpm check` (typecheck + lint + tests) before finishing.

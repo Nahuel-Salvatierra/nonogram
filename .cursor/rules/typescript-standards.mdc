@@ -1,0 +1,44 @@
+---
+description: TypeScript naming, typing and error handling conventions
+globs: **/*.ts,**/*.tsx
+alwaysApply: false
+---
+
+# TypeScript Standards
+
+## Naming
+- `camelCase` variables/functions, `PascalCase` types/components, `UPPER_SNAKE_CASE` module constants.
+- Booleans start with `is`, `has`, `can`, `should`.
+
+## Types
+- `type` by default; `interface` only for service contracts.
+- No `enum`: use literal unions or `as const` objects.
+- Discriminated unions for actions/events, with exhaustive `switch`:
+
+```ts
+switch (action.type) {
+  case 'setValue': return setValue(state, action)
+  case 'undo': return undo(state)
+  default: return assertNever(action)
+}
+```
+
+- `readonly` on state types and arrays exposed outside a function.
+- Exported functions declare their return type.
+
+## Exports
+- Named exports only. No `export default` except config files that require it.
+
+## Safety
+- No non-null assertions (`!`) and no `as` casts to silence errors. Model the empty case.
+
+```ts
+// BAD
+const cell = board[index]!
+// GOOD
+const cell = board[index] ?? EMPTY
+```
+
+## Errors
+- Expected outcomes are returned as values (`{ ok: false, reason }`, `null`).
+- `throw` only for programmer errors. I/O failures are caught at the service boundary.

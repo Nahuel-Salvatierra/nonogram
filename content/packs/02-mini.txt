@@ -1,0 +1,122 @@
+pack: mini
+title: Miniaturas
+
+puzzle: tree
+name: Árbol
+..#..
+.###.
+#####
+..#..
+..#..
+
+puzzle: note
+name: Nota
+..##.
+..#.#
+..#..
+###..
+###..
+
+puzzle: bell
+name: Campana
+..#..
+.###.
+.###.
+#####
+..#..
+
+puzzle: mushroom
+name: Hongo
+.###.
+#####
+#####
+..#..
+.###.
+
+puzzle: star
+name: Estrella
+..#..
+#####
+.###.
+.#.#.
+#...#
+
+puzzle: umbrella
+name: Paraguas
+.###.
+#####
+..#..
+..#..
+.##..
+
+puzzle: boat
+name: Barco
+..#..
+..##.
+.####
+#####
+.###.
+
+puzzle: ghost
+name: Fantasma
+.###.
+#####
+#.#.#
+#####
+#.#.#
+
+puzzle: rocket
+name: Cohete
+..#..
+.###.
+.###.
+.###.
+#.#.#
+
+puzzle: moon
+name: Luna
+.###.
+##...
+#....
+##...
+.###.
+
+puzzle: key
+name: Llave
+.....
+###..
+#.###
+###.#
+.....
+
+puzzle: diamond
+name: Diamante
+..#..
+.###.
+#####
+.###.
+..#..
+
+puzzle: check
+name: Visto
+.....
+...##
+...#.
+#.##.
+.##..
+
+puzzle: flower
+name: Flor
+.#.#.
+#####
+.###.
+..#..
+.##..
+
+puzzle: lightning
+name: Rayo
+..##.
+.##..
+#####
+..##.
+.##..

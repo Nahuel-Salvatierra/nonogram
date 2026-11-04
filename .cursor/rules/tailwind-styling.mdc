@@ -1,0 +1,29 @@
+---
+description: Tailwind styling with semantic tokens, cn helper and touch target sizes
+globs: src/ui/**
+alwaysApply: false
+---
+
+# Tailwind Styling
+
+- Tailwind only. No ad-hoc CSS files or inline `style`, except unavoidable dynamic values.
+- Colors come from semantic tokens defined in `src/index.css` (`@theme`): `bg-surface`, `text-ink`,
+  `bg-cell-selected`, `text-cell-given`, `text-danger`... Never hex values or palette colors in components.
+
+```tsx
+// BAD
+<div className="bg-[#eef2ff] text-indigo-600" />
+// GOOD
+<div className="bg-cell-related text-accent" />
+```
+
+- Build conditional classes with `cn()` from `@ui/lib/cn` (clsx + tailwind-merge).
+- Repeated variants go in a typed map inside the component:
+
+```tsx
+const VARIANT_CLASSES: Record<ButtonVariant, string> = { primary: '...', ghost: '...' }
+```
+
+- Dark mode: tokens switch under the `.dark` class; components rarely need `dark:`.
+- Touch targets: controls are at least 44px (`min-h-11 min-w-11`). Board cells are the documented exception.
+- Respect reduced motion: animations use `motion-safe:`.

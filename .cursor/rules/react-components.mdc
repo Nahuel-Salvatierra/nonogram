@@ -1,0 +1,36 @@
+---
+description: React component structure, hooks for logic, store usage and accessibility
+globs: src/ui/**/*.tsx
+alwaysApply: false
+---
+
+# React Components
+
+Map of this area: `docs/architecture/ui.md`; store hooks and selectors: `docs/architecture/app.md`.
+
+## Files
+- One component per file; file name equals component name (`ToolToggle.tsx`).
+- A subcomponent used by a single parent lives in the parent folder (`Board/Cell.tsx`).
+- No barrel `index.ts` files.
+
+## Logic out of components
+- Non-trivial logic (derived state, handlers with rules, effects) goes in a `useXxx.ts` hook next to
+  the component. Components stay presentational.
+
+```tsx
+// BAD: rules inside the component body
+const axis = Math.abs(dx) > Math.abs(dy) ? 'row' : 'col'
+// GOOD
+const { bind, strokeCount } = usePaintStroke()
+```
+
+## Size
+- Keep components under ~150 lines. Split when they grow.
+
+## Props and state
+- Type props as `XxxProps` above the component.
+- No prop drilling deeper than 2 levels: use a store selector instead.
+- Use granular Zustand selectors, never the whole store. Wrap hot list items (cells) in `memo`.
+
+## Accessibility
+- Semantic elements (`button`, never clickable `div`), `aria-label` from strings, visible focus.

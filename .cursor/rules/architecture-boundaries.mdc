@@ -1,0 +1,36 @@
+---
+description: Layer boundaries between core, services, app and ui, and where side effects live
+alwaysApply: true
+---
+
+# Architecture Boundaries
+
+## Layers and allowed imports
+- `src/core`: imports nothing from other layers. No React, Capacitor, DOM, Zustand.
+- `src/services`: may import `core`. Only place allowed to touch Capacitor/browser APIs.
+- `src/app`: may import `core` and `services` interfaces.
+- `src/ui`: may import `app` and only `import type` from `core`.
+- `src/main.tsx`: composition root; picks concrete service adapters.
+
+ESLint enforces these rules; do not disable them.
+
+## Determinism
+- No `Math.random`, `Date.now`, or I/O in `core`. Inject an `Rng` and timestamps as arguments.
+
+## Side effects
+- Reducers and components are pure. Persisting, analytics, ads and haptics happen in app subscribers
+  reacting to domain events, or inside services.
+
+```ts
+// BAD (inside gameReducer)
+storage.save(state)
+// GOOD: reducer returns { state, events }; an app subscriber persists on events
+```
+
+## Services
+- Each platform capability is an interface `XxxService` with adapters such as `capacitor`, `noop`, `memory`.
+- The app receives services through `createServices`/providers so tests can inject memory/noop adapters.
+
+## Imports
+- Across layers use aliases: `@core/*`, `@app/*`, `@services/*`, `@ui/*`.
+- Within the same layer use short relative imports (`./board`). `core` stays alias-free so Node scripts can run it.

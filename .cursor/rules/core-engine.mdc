@@ -1,0 +1,30 @@
+---
+description: Rules for the pure Nonogram engine, game and stats logic in src/core
+globs: src/core/**
+alwaysApply: false
+---
+
+# Core Engine
+
+Map of this area: `docs/architecture/engine.md` (engine), `game.md` (reducer), `data.md` (stats).
+
+- Pure and deterministic: same input and same seed produce the same output.
+- Randomness only through the injected `Rng` (`createRng(seed)`); time only through arguments (`now`).
+- State is immutable: reducers return new objects. Mutable internals (typed arrays, scratch lines) are
+  allowed inside a function for performance but never escape it.
+- A grid is a flat row-major array of length `rows * cols`. Use the helpers in `engine/grid.ts`
+  (`indexOf`, `rowCells`, `colCells`, `lineCells`) instead of recomputing indices.
+- Line deductions work on `Line` arrays of `LineCell` (`unknown | filled | crossed`) and never read
+  the solution.
+
+```ts
+// BAD
+for (let i = 0; i < rows * cols; i++) if (Math.floor(i / cols) === row) ...
+// GOOD
+for (const i of rowCells(size, row)) ...
+```
+
+- Every public function has tests next to it.
+- Changing generator output requires bumping `GENERATOR_VERSION`; changing the analyzer requires
+  bumping `ANALYZER_VERSION` (both in `engine/versions.ts`) and rebuilding packs (`pnpm build:packs`).
+- Keep `core` alias-free (relative imports) so Node scripts can import it.

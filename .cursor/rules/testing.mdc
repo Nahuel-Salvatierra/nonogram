@@ -1,0 +1,26 @@
+---
+description: Testing conventions for Vitest, React Testing Library and Playwright
+globs: **/*.test.ts,**/*.test.tsx,e2e/**
+alwaysApply: false
+---
+
+# Testing
+
+Fixtures, helpers and gotchas: `docs/architecture/testing.md`.
+
+- Vitest. Tests live next to the code (`solver.ts` + `solver.test.ts`). Fixtures live in `__fixtures__/`.
+- Test names describe behavior in English; use Arrange, Act, Assert.
+
+```ts
+it('does not fill a crossed cell with the fill tool', () => {
+  const state = createTestGame({ cells: 'x....' })
+  const next = reduce(state, { type: 'beginStroke', cell: 0 })
+  expect(next.state.cells).toEqual(state.cells)
+})
+```
+
+- Always seed randomness (`createRng(42)`). No snapshot tests for logic.
+- UI: React Testing Library, query by role/label (`getByRole('button', { name: ... })`). Never test
+  implementation details or class names, except for state classes that encode behavior.
+- Inject memory/noop services; never touch real Capacitor plugins in tests.
+- E2E: Playwright with a mobile viewport against the production build (`e2e/`).
