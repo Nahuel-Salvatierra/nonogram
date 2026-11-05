@@ -19,7 +19,7 @@ copias se replica en la otra.
 | `playwright.config.ts`                                     | Igual    | Pixel 7, puerto 4173.                         |
 | `package.json`                                             | Adaptado | Scripts `build:packs`, `generate:quick-pack`. |
 | `capacitor.config.ts`, `index.html`, `public/favicon.svg`  | Adaptado | `com.punky.nonogram`, color de marca teal.    |
-| `src/vite-env.d.ts`                                        | Adaptado | `VITE_ADS_MODE`, `VITE_ADMOB_REWARDED_ID`.    |
+| `src/vite-env.d.ts`                                        | Igual    |                                               |
 | `src/test/setup.ts`                                        | Igual    |                                               |
 
 ## Core
@@ -39,8 +39,7 @@ copias se replica en la otra.
 | `storage/schemas.ts`, `migrations.ts`, `persistence.ts`                | Adaptado | Claves y esquemas del Nonogram.          |
 | `lifecycle/*`                                                          | Igual    |                                          |
 | `platform/*`                                                           | Igual    |                                          |
-| `ads/AdService.ts`                                                     | Adaptado | Mock y grabadora; `continueAfterLoss`.   |
-| `ads/admobAdService.ts`                                                | Propio   | Solo Nonogram por ahora (rewarded).      |
+| `ads/AdService.ts`                                                     | Adaptado | Noop en la app; grabadora en tests.      |
 | `analytics/AnalyticsService.ts`                                        | Igual    |                                          |
 | `random.ts`                                                            | Igual    |                                          |
 | `AppServices.ts`, `createServices.ts`, `createTestServices.ts`         | Adaptado | Suministro de puzzles propio.            |

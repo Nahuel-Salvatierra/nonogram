@@ -299,7 +299,7 @@ Todo vive en `src/core/engine`, en TypeScript puro y sin React:
 2. **Si no hay errores:** busca la deducción de línea más simple (T1 antes que T2). Resalta la fila o la columna y aplica las celdas forzadas con un estilo distinto, que queda bloqueado como "pista".
 3. **Si la única deducción disponible requiere contradicción:** revela una sola celda forzada, elegida en la línea más restringida.
 4. **Límite:** 3 pistas gratis por día local (se renuevan a la medianoche del teléfono), compartidas entre todos los puzzles. El cupo vive en `meta` (`hintDay`, `freeHintsUsed`) y `hintsRemaining` del juego es solo la copia visible: se pisa al crear o restaurar una partida y antes de cada pedido. Reintentar no devuelve pistas.
-5. **Pista extra:** sin pistas gratis, el botón abre "Sin pistas gratis" con "Ver anuncio". Solo si el anuncio con recompensa se completa se aplica la pista (`hint` con `isRewarded`), que no descuenta el cupo. Si se cierra o no hay anuncio, no se otorga.
+5. **Sin pistas gratis:** el botón abre "Sin pistas gratis" y no otorga otra pista. Las pistas extra por anuncio quedan para cuando haya monetización.
 
 Ningún puzzle necesita pistas para resolverse.
 
@@ -309,7 +309,7 @@ Ningún puzzle necesita pistas para resolverse.
   - Si el jugador llena una celda que debería estar vacía, la celda se **autocorrige a cruz**, se pinta en rojo y suma 1 error. Cada celda cuenta una sola vez.
   - Las cruces no se validan en el momento (son notas del jugador), pero la pista las revisa.
 - **Validación desactivada:** no hay feedback inmediato. Las líneas que cumplen su pista se ven atenuadas igual. Si todas las líneas parecen cumplidas pero el tablero no coincide con la solución, no puede pasar, porque la solución es única.
-- **Límite de 3 errores** (solo con la validación automática activada): al tercer error la partida queda perdida, el tiempo se detiene y aparece "Perdiste" con "Ver anuncio y seguir", "Reintentar" y "Volver". Ver un anuncio completo sigue con el mismo tablero, tiempo y pistas aplicadas, y deja los errores en 2: el próximo error vuelve a perder. Reintentar es gratis y empieza el puzzle desde cero (tablero, errores y tiempo; las pistas gastadas no vuelven). Una partida perdida no cuenta como abandonada: se guarda y al volver a abrirla muestra el mismo aviso. El "Reiniciar" de la Pausa sigue conservando los errores. Sin penalidad de tiempo. El contador alimenta "Perfectos" (sin errores ni pistas).
+- **Límite de 3 errores** (solo con la validación automática activada): al tercer error la partida queda perdida, el tiempo se detiene y aparece "Perdiste" con "Reintentar" y "Volver". Reintentar es gratis y empieza el puzzle desde cero (tablero, errores y tiempo; las pistas gastadas no vuelven). Una partida perdida no cuenta como abandonada: se guarda y al volver a abrirla muestra el mismo aviso. El "Reiniciar" de la Pausa sigue conservando los errores. Sin penalidad de tiempo. El contador alimenta "Perfectos" (sin errores ni pistas). Seguir tras perder con el mismo tablero queda para cuando haya anuncios.
 - **Ajustes de ayuda** (todos activados por defecto):
   - Atenuar las pistas de líneas completas: en el MVP se atenúa la línea entera; número por número llega en la Fase 2.
   - Tachar automáticamente el resto de una línea completa.
@@ -471,20 +471,14 @@ Usa el mismo mecanismo que el Sudoku:
 
 ## 18. Publicidad
 
-**Hecho: anuncios con recompensa (rewarded).** Siempre los pide el jugador; nunca aparecen solos.
+La primera versión publicada **no incluye anuncios** ni el SDK de AdMob. `createServices` usa `createNoopAdService`. La política de privacidad no declara redes publicitarias.
 
-- **Pista extra:** con el cupo diario agotado (sección 9), cada pista extra es un anuncio.
-- **Seguir tras perder:** en "Perdiste", un anuncio permite seguir con el mismo tablero (sección 10).
-- **Si el anuncio se cierra antes de tiempo o no hay inventario, no se otorga nada.** El diálogo avisa "No hay anuncios disponibles" cuando falla.
-- **Mock fuera de producción:** `createServices` usa `createMockAdService`, que abre el diálogo "Anuncio de prueba" ("Terminar de ver" o "Cerrar sin terminar"). `vite build` del APK también es producción para Vite, por eso el modo real no depende de `import.meta.env.PROD`: solo se activa con `VITE_ADS_MODE=admob`.
-- **AdMob:** `createAdMobAdService` con `@capacitor-community/admob`. Usa `VITE_ADMOB_REWARDED_ID` o, si falta, la unidad de prueba de Google con `isTesting`. Pide anuncios no personalizados (`npa`) hasta tener consentimiento UMP. El App ID va en `android/app/src/main/res/values/strings.xml` (`admob_app_id`, hoy el de prueba de Google). Fuera de Android devuelve `failed`.
-- **Pausa:** el anuncio a pantalla completa dispara el segundo plano y pausa la partida; al completarlo, la pista extra reanuda la partida antes de aplicarse.
-
-**Pendiente:**
+**Pendiente (cuando haya cuenta y unidades de anuncios):**
 
 - `AdPolicy` pura para interstitials: nunca durante una partida, como máximo uno cada 3 completadas, con 3 minutos de separación y nada en los primeros días.
 - Interstitial después de la Victoria, al tocar "Siguiente" o "Inicio". Banner solo en Home, Colección y Estadísticas.
-- Consentimiento UMP; recién entonces quitar `npa`.
+- Anuncios con recompensa: pista extra al agotar las gratis, y seguir tras perder con el mismo tablero.
+- Consentimiento UMP antes de anuncios personalizados.
 - **Eventos de analytics:** hoy se emiten `game_started`, `game_completed`, `game_lost`, `game_continued`, `game_abandoned`, `hint_used` (con `rewarded`) y `hints_exhausted`. Faltan `rewarded_*` (oferta mostrada, aceptada y completada) e `interstitial_shown`.
 
 ## 19. Arquitectura y reutilización

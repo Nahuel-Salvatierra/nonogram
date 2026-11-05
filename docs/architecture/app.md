@@ -4,13 +4,11 @@ Glue between the pure core, the services and React. Contains no UI and no Capaci
 
 ## Runtime (`runtime/createAppRuntime.ts`)
 
-`createAppRuntime(services, mockAdStore?)` builds everything and returns an `AppRuntime`:
+`createAppRuntime(services)` builds everything and returns an `AppRuntime`:
 
 | Member                        | Purpose                                                                           |
 | ----------------------------- | --------------------------------------------------------------------------------- |
 | `gameStore`                   | current game, `dispatch`, `requestHint`, `openCollectionPuzzle`, `startQuickGame` |
-| `rewardedAds`                 | `watchForHint()`, `watchToContinue()` (`rewardedAds.ts`)                          |
-| `mockAdStore`                 | pending test ad shown by `MockAdDialog` (`stores/mockAdStore.ts`)                 |
 | `settingsStore`, `statsStore` | hydrated from persistence, save on change                                         |
 | `collectionStore`             | Collection record + in-progress `progress` per puzzle id                          |
 | `bus`                         | `EventBus<GameEvent>` (`eventBus.ts`)                                             |
@@ -36,15 +34,12 @@ isNewRecord, name, solution, nextPuzzleId })`.
 `gamePersistence.ts`: `toPersistedGame` syncs the timer; `fromPersistedGame` restores a playing game
 as paused; `isActiveGame`.
 
-Ads (rewarded only, always player-initiated):
+Hints:
 
 - `hintBudget.ts`: free daily hints from `meta` (`freeHints()`, `consume()`). The game store sets
   `hintsRemaining` from it when a game is created or restored and before each `requestHint`.
-- `rewardedAds.ts`: `watchForHint` shows `extraHint`; on `rewarded` it resumes a game paused by the
-  ad and dispatches `hint { isRewarded: true }`. `watchToContinue` shows `continueAfterLoss` and
-  dispatches `continue`. `dismissed` and `failed` grant nothing; both return the `RewardedResult`.
-- `main.tsx` creates the `mockAdStore` and passes its `present` to `createServices`, which uses the
-  mock unless `VITE_ADS_MODE=admob`.
+- The first release does not show ads. `createServices` wires `createNoopAdService`. Extra hints
+  and continuing a lost game come back with monetization.
 
 ## Stores (`stores/`)
 
@@ -63,15 +58,15 @@ Vanilla Zustand stores (`createStore`), consumed in React through `useStore`.
 ## React access
 
 `AppRuntimeContext.tsx`: `AppRuntimeProvider`, `useRuntime()`, and selector hooks `useGameStore`,
-`useSettingsStore`, `useStatsStore`, `useCollectionStore`, `useMockAdStore`. Always select narrowly.
+`useSettingsStore`, `useStatsStore`, `useCollectionStore`. Always select narrowly.
 
-| Hook (`hooks/`)                      | Returns                                                                                                                                     |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `useGameActions`                     | stable callbacks (`beginStroke`, `endStroke`, `undo`, `hint`, `watchAdForHint`, `retry`, `watchAdToContinue`, `pause`, `startQuickGame`...) |
-| `useGameViews`                       | memoized `cells: CellView[]` and `clues: { rows, cols }: ClueView[]`                                                                        |
-| `useElapsedMs`                       | display time, re-rendering every 500 ms only while running                                                                                  |
-| `useBackButton(handler, isEnabled?)` | registers on the back stack while mounted                                                                                                   |
-| `useThemeSync`                       | toggles `.dark` on `<html>` and the status bar                                                                                              |
+| Hook (`hooks/`)                      | Returns                                                                                              |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| `useGameActions`                     | stable callbacks (`beginStroke`, `endStroke`, `undo`, `hint`, `retry`, `pause`, `startQuickGame`...) |
+| `useGameViews`                       | memoized `cells: CellView[]` and `clues: { rows, cols }: ClueView[]`                                 |
+| `useElapsedMs`                       | display time, re-rendering every 500 ms only while running                                           |
+| `useBackButton(handler, isEnabled?)` | registers on the back stack while mounted                                                            |
+| `useThemeSync`                       | toggles `.dark` on `<html>` and the status bar                                                       |
 
 ## Selectors (what ui uses instead of core)
 
@@ -83,10 +78,10 @@ Vanilla Zustand stores (`createStore`), consumed in React through `useStore`.
   `firstTutorialPuzzleId`.
 - `stats/selectors.ts`: `selectStatsView(stats, size | 'all', difficulty | 'all')`, `bestTimeOf`.
 - `catalog.ts`: re-exports sizes, difficulties, tools, themes, `MAX_MISTAKES`, `FREE_HINTS_PER_DAY`,
-  `TUTORIAL_PACK_ID` and the `RewardedPlacement` / `RewardedResult` types.
+  `TUTORIAL_PACK_ID`.
 
 ## Tests
 
 `runtime/createAppRuntime.test.ts` (quick and Collection completion, progress kept when switching
 puzzles, restore, background save, quick-game abandon, back button, meta, daily hint budget),
-`runtime/rewardedAds.test.ts`, `stores/mockAdStore.test.ts` plus selector tests.
+plus selector tests.

@@ -1,6 +1,5 @@
 import type { Difficulty, SizeId } from '@core/engine/difficulty'
 import type { GameAction, Tool } from '@core/game/types'
-import type { RewardedResult } from '@services/ads/AdService'
 import { useMemo } from 'react'
 import { useRuntime } from '../AppRuntimeContext'
 
@@ -14,18 +13,16 @@ export type GameActions = {
   readonly endStroke: () => void
   readonly undo: () => void
   readonly hint: () => void
-  readonly watchAdForHint: () => Promise<RewardedResult>
   readonly dismissHint: () => void
   readonly pause: () => void
   readonly resume: () => void
   readonly restart: () => void
   readonly retry: () => void
-  readonly watchAdToContinue: () => Promise<RewardedResult>
   readonly abandon: () => void
 }
 
 export const useGameActions = (): GameActions => {
-  const { gameStore, settingsStore, rewardedAds, flushSave } = useRuntime()
+  const { gameStore, settingsStore, flushSave } = useRuntime()
   return useMemo(() => {
     const dispatch = (action: GameAction): void => gameStore.getState().dispatch(action)
     return {
@@ -41,7 +38,6 @@ export const useGameActions = (): GameActions => {
       endStroke: () => dispatch({ type: 'endStroke' }),
       undo: () => dispatch({ type: 'undo' }),
       hint: () => gameStore.getState().requestHint(),
-      watchAdForHint: rewardedAds.watchForHint,
       dismissHint: () => dispatch({ type: 'dismissHint' }),
       pause: () => {
         dispatch({ type: 'pause' })
@@ -50,8 +46,7 @@ export const useGameActions = (): GameActions => {
       resume: () => dispatch({ type: 'resume' }),
       restart: () => dispatch({ type: 'restart' }),
       retry: () => dispatch({ type: 'retry' }),
-      watchAdToContinue: rewardedAds.watchToContinue,
       abandon: () => dispatch({ type: 'abandon' }),
     }
-  }, [gameStore, settingsStore, rewardedAds, flushSave])
+  }, [gameStore, settingsStore, flushSave])
 }

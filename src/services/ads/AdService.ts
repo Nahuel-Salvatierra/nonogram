@@ -3,8 +3,6 @@ export type InterstitialPlacement = 'afterVictory'
 export type RewardedPlacement = 'extraHint' | 'continueAfterLoss'
 export type RewardedResult = 'rewarded' | 'dismissed' | 'failed'
 
-export type RewardedPresenter = (placement: RewardedPlacement) => Promise<RewardedResult>
-
 export interface AdService {
   showBanner(placement: BannerPlacement): Promise<void>
   hideBanner(): Promise<void>
@@ -17,11 +15,6 @@ export const createNoopAdService = (): AdService => ({
   hideBanner: async () => undefined,
   showInterstitial: async () => false,
   showRewarded: async () => 'failed',
-})
-
-export const createMockAdService = (presentRewarded: RewardedPresenter): AdService => ({
-  ...createNoopAdService(),
-  showRewarded: presentRewarded,
 })
 
 export type RecordingAdService = AdService & {

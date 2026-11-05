@@ -1,5 +1,3 @@
-import { createMockAdStore } from '@app/stores/mockAdStore'
-import { createMockAdService } from '@services/ads/AdService'
 import { createTestServices, type TestServices } from '@services/createTestServices'
 import { COLLECTION } from '@services/puzzles/collection'
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
@@ -88,39 +86,6 @@ describe('app integration', () => {
     expect(app.container.querySelectorAll('[data-state="crossed"]')).toHaveLength(0)
   })
 
-  it('continues a lost game with the same board after watching an ad', async () => {
-    const { app, services } = await setup()
-    await startQuickGame()
-    TEST_WRONG_CELLS.forEach((cell) => tap(app, cell))
-    const dialog = await screen.findByRole('dialog', { name: 'Perdiste' })
-
-    services.ads.setRewardedResult('rewarded')
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Ver anuncio y seguir' }))
-    await waitFor(() =>
-      expect(screen.queryByRole('dialog', { name: 'Perdiste' })).not.toBeInTheDocument(),
-    )
-    expect(screen.getByText('Errores: 2/3')).toBeInTheDocument()
-    expect(app.container.querySelectorAll('[data-state="crossed"]')).toHaveLength(3)
-  })
-
-  it('continues a lost game through the test ad dialog when ads are mocked', async () => {
-    const mockAdStore = createMockAdStore()
-    const services = createTestServices(TEST_QUICK_PUZZLE)
-    const ads = createMockAdService(mockAdStore.getState().present)
-    const app = await renderApp({ ...services, ads }, '/', mockAdStore)
-    await startQuickGame()
-    TEST_WRONG_CELLS.forEach((cell) => tap(app, cell))
-    const lost = await screen.findByRole('dialog', { name: 'Perdiste' })
-
-    fireEvent.click(within(lost).getByRole('button', { name: 'Ver anuncio y seguir' }))
-    const ad = await screen.findByRole('dialog', { name: 'Anuncio de prueba' })
-    fireEvent.click(within(ad).getByRole('button', { name: 'Terminar de ver' }))
-    await waitFor(() =>
-      expect(screen.queryByRole('dialog', { name: 'Perdiste' })).not.toBeInTheDocument(),
-    )
-    expect(screen.queryByRole('dialog', { name: 'Anuncio de prueba' })).not.toBeInTheDocument()
-  })
-
   it('zooms the board with the buttons and still paints cells', async () => {
     const { app } = await setup()
     await startQuickGame()
@@ -171,8 +136,8 @@ describe('app integration', () => {
     expect(app.container.querySelectorAll('[aria-label$=", pista"]')).toHaveLength(5)
   })
 
-  it('offers an ad once the free hints of the day run out and applies the extra hint', async () => {
-    const { app, services } = await setup()
+  it('says free hints are gone for the day and does not grant another hint', async () => {
+    const { app } = await setup()
     await startQuickGame()
     const askHint = (): void => {
       fireEvent.click(screen.getByRole('button', { name: /^Pista,/ }))
@@ -184,16 +149,10 @@ describe('app integration', () => {
 
     askHint()
     const offer = await screen.findByRole('dialog', { name: 'Sin pistas gratis' })
-    fireEvent.click(within(offer).getByRole('button', { name: 'Ver anuncio' }))
-    expect(await within(offer).findByRole('alert')).toHaveTextContent('No hay anuncios disponibles')
-
-    services.ads.setRewardedResult('rewarded')
-    fireEvent.click(within(offer).getByRole('button', { name: 'Ver anuncio' }))
-    await waitFor(() =>
-      expect(screen.queryByRole('dialog', { name: 'Sin pistas gratis' })).not.toBeInTheDocument(),
-    )
-    expect(app.runtime.gameStore.getState().game?.hintsUsed).toBe(4)
-    expect(services.ads.rewardedRequests).toEqual(['extraHint', 'extraHint'])
+    expect(offer).toHaveTextContent('Ya usaste las 3 pistas gratis de hoy')
+    fireEvent.click(within(offer).getByRole('button', { name: 'Cerrar' }))
+    expect(screen.queryByRole('dialog', { name: 'Sin pistas gratis' })).not.toBeInTheDocument()
+    expect(app.runtime.gameStore.getState().game?.hintsUsed).toBe(3)
   })
 
   it('opens a collection puzzle with its tip and keeps its progress when leaving', async () => {

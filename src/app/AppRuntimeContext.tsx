@@ -3,7 +3,6 @@ import { useStore } from 'zustand'
 import type { AppRuntime } from './runtime/createAppRuntime'
 import type { CollectionStoreState } from './stores/collectionStore'
 import type { GameStoreState } from './stores/gameStore'
-import type { MockAdStoreState } from './stores/mockAdStore'
 import type { SettingsStoreState } from './stores/settingsStore'
 import type { StatsStoreState } from './stores/statsStore'
 
@@ -35,6 +34,3 @@ export const useStatsStore = <T,>(selector: (state: StatsStoreState) => T): T =>
 
 export const useCollectionStore = <T,>(selector: (state: CollectionStoreState) => T): T =>
   useStore(useRuntime().collectionStore, selector)
-
-export const useMockAdStore = <T,>(selector: (state: MockAdStoreState) => T): T =>
-  useStore(useRuntime().mockAdStore, selector)

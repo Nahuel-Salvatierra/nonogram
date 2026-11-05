@@ -7,7 +7,6 @@ import { nextCollectionPuzzle } from '@services/puzzles/collection'
 import type { Meta } from '@services/storage/schemas'
 import { createCollectionStore, type CollectionStore } from '../stores/collectionStore'
 import { createGameStore, type GameStore } from '../stores/gameStore'
-import { createMockAdStore, type MockAdStore } from '../stores/mockAdStore'
 import { createSettingsStore, type SettingsStore } from '../stores/settingsStore'
 import { createStatsStore, type StatsStore } from '../stores/statsStore'
 import { toAnalyticsEvent } from './analyticsEvents'
@@ -15,7 +14,6 @@ import { createBackStack, type BackStack } from './backStack'
 import { createEventBus, type EventBus } from './eventBus'
 import { isActiveGame, toPersistedGame } from './gamePersistence'
 import { createHintBudget } from './hintBudget'
-import { createRewardedAds, type RewardedAds } from './rewardedAds'
 
 export const SAVE_DEBOUNCE_MS = 300
 export const TICK_INTERVAL_MS = 5000
@@ -28,8 +26,6 @@ export type AppRuntime = {
   readonly settingsStore: SettingsStore
   readonly statsStore: StatsStore
   readonly collectionStore: CollectionStore
-  readonly mockAdStore: MockAdStore
-  readonly rewardedAds: RewardedAds
   readonly start: () => Promise<void>
   readonly flushSave: () => Promise<void>
   readonly afterVictory: () => Promise<void>
@@ -46,10 +42,7 @@ const collectionProgress = (games: readonly GameState[]): Record<string, number>
 const nextPuzzleIdOf = (summary: GameSummary): string | null =>
   summary.mode === 'collection' ? (nextCollectionPuzzle(summary.puzzleId)?.id ?? null) : null
 
-export const createAppRuntime = (
-  services: AppServices,
-  mockAdStore: MockAdStore = createMockAdStore(),
-): AppRuntime => {
+export const createAppRuntime = (services: AppServices): AppRuntime => {
   const bus = createEventBus<GameEvent>()
   const backStack = createBackStack()
   const settingsStore = createSettingsStore(services.persistence)
@@ -62,7 +55,6 @@ export const createAppRuntime = (
     getSettings: () => settingsStore.getState().settings,
     getFreeHints: hintBudget.freeHints,
   })
-  const rewardedAds = createRewardedAds(services.ads, gameStore)
   const cleanups: (() => void)[] = []
   let saveTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -173,8 +165,6 @@ export const createAppRuntime = (
     settingsStore,
     statsStore,
     collectionStore,
-    mockAdStore,
-    rewardedAds,
     start,
     flushSave,
     afterVictory: async () => {

@@ -22,19 +22,19 @@
 
 ## Actions
 
-| Action                    | File           | Behavior                                                                                                                                      |
-| ------------------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `setTool`                 | `strokes.ts`   | ignored during a stroke                                                                                                                       |
-| `beginStroke { cell }`    | `strokes.ts`   | mode from the first cell: if it is already in the tool's state, the stroke empties; otherwise it paints unknown cells. New `batch` id         |
-| `extendStroke { cells }`  | `strokes.ts`   | axis locks on the first extension; off-axis and visited cells are ignored                                                                     |
-| `endStroke`               | `strokes.ts`   | auto-cross (if enabled) lines through the visited cells, same batch                                                                           |
-| `undo`, `redo`            | `history.ts`   | whole batch at once; blocked during a stroke; locked cells are skipped                                                                        |
-| `hint`, `dismissHint`     | `hints.ts`     | see below; `hint { isRewarded }` is the ad-paid hint                                                                                          |
-| `pause`, `resume`, `tick` | `lifecycle.ts` | `pause` clears the stroke and focus                                                                                                           |
-| `restart`                 | `lifecycle.ts` | clears the board and `errorCells`; keeps hinted cells, time, mistakes and hints                                                               |
-| `retry`                   | `lifecycle.ts` | only from `lost`: fresh board (hinted cells too), mistakes and time reset, spent hints not refunded; `restartCount + 1`, `gameRestarted`      |
-| `continue`                | `lifecycle.ts` | only from `lost` (after a rewarded ad): back to `playing` with the same board, hints and time, `mistakes = MAX_MISTAKES - 1`; `gameContinued` |
-| `abandon`                 | `lifecycle.ts` | from `playing`, `paused` or `lost`; emits `gameAbandoned { summary, progress }`                                                               |
+| Action                    | File           | Behavior                                                                                                                                                          |
+| ------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `setTool`                 | `strokes.ts`   | ignored during a stroke                                                                                                                                           |
+| `beginStroke { cell }`    | `strokes.ts`   | mode from the first cell: if it is already in the tool's state, the stroke empties; otherwise it paints unknown cells. New `batch` id                             |
+| `extendStroke { cells }`  | `strokes.ts`   | axis locks on the first extension; off-axis and visited cells are ignored                                                                                         |
+| `endStroke`               | `strokes.ts`   | auto-cross (if enabled) lines through the visited cells, same batch                                                                                               |
+| `undo`, `redo`            | `history.ts`   | whole batch at once; blocked during a stroke; locked cells are skipped                                                                                            |
+| `hint`, `dismissHint`     | `hints.ts`     | see below; `hint { isRewarded }` is the ad-paid hint                                                                                                              |
+| `pause`, `resume`, `tick` | `lifecycle.ts` | `pause` clears the stroke and focus                                                                                                                               |
+| `restart`                 | `lifecycle.ts` | clears the board and `errorCells`; keeps hinted cells, time, mistakes and hints                                                                                   |
+| `retry`                   | `lifecycle.ts` | only from `lost`: fresh board (hinted cells too), mistakes and time reset, spent hints not refunded; `restartCount + 1`, `gameRestarted`                          |
+| `continue`                | `lifecycle.ts` | only from `lost`: back to `playing` with the same board, hints and time, `mistakes = MAX_MISTAKES - 1`; `gameContinued`. The UI does not call it until ads return |
+| `abandon`                 | `lifecycle.ts` | from `playing`, `paused` or `lost`; emits `gameAbandoned { summary, progress }`                                                                                   |
 
 Painting goes through `cells.ts` `paintCell`: with `autoValidate`, a wrong **fill** becomes a cross
 plus an `errorCell` (not recorded in history) and emits `mistakeMade` once per cell. Wrong crosses

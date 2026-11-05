@@ -65,12 +65,10 @@ Probar en 2–3 dispositivos reales: uno de gama baja (Android 10–11, 2–3 GB
 - [ ] Deshacer revierte el trazo completo en un paso; no deshace pistas ni errores corregidos.
 - [ ] Pista: primero señala errores sin gastar; luego deduce una línea o revela una celda.
 - [ ] Pistas gratis: 3 por día entre todos los puzzles (el contador sigue al cambiar de puzzle o
-      reabrir la app y vuelve a 3 al día siguiente). Sin gratis, "Sin pistas gratis" ofrece "Ver
-      anuncio"; la pista llega solo al terminar el anuncio.
-- [ ] Perdiste: "Ver anuncio y seguir" conserva tablero y tiempo con errores en 2/3; "Reintentar"
-      empieza de cero sin devolver pistas.
-- [ ] Build sin `VITE_ADS_MODE`: aparece "Anuncio de prueba". Build con `VITE_ADS_MODE=admob` en
-      Android: anuncio de prueba de Google; cerrarlo antes de tiempo no da la recompensa.
+      reabrir la app y vuelve a 3 al día siguiente). Sin gratis, "Sin pistas gratis" no otorga otra
+      pista.
+- [ ] Perdiste: "Reintentar" empieza de cero sin devolver pistas. No hay opción de seguir con un
+      anuncio.
 - [ ] Validación automática ON: un relleno incorrecto se convierte en X roja con trama y el
       contador de errores sube una vez por celda.
 - [ ] Tachado automático: al completar una línea se marcan sus celdas vacías.

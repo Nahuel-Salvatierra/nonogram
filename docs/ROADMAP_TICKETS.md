@@ -57,11 +57,11 @@ Continúa la numeración de la Fase 1 (tickets 1–39, cerrada). Cada ticket se 
 | #   | Ticket                                       | Capas             |
 | --- | -------------------------------------------- | ----------------- |
 | 51  | `AdPolicy` pura con tests                    | core              |
-| 52  | `AdMobAdService` (rewarded hecho)            | services          |
+| 52  | `AdMobAdService` (aplazado)                  | services          |
 | 53  | Consentimiento UMP/GDPR                      | services, ui      |
 | 54  | Banner en Home, Colección y Estadísticas     | app, ui           |
 | 55  | Interstitial post-Victoria                   | app               |
-| 56  | Rewarded: pista extra y seguir (hecho)       | core, app, ui     |
+| 56  | Rewarded: pista extra y seguir (aplazado)    | core, app, ui     |
 | 57  | Analytics real conectado al bus              | services          |
 | 58  | Compra "Quitar anuncios" (opcional)          | services, app, ui |
 | 59  | Política de privacidad y ficha de Play Store | docs              |
@@ -70,18 +70,17 @@ Continúa la numeración de la Fase 1 (tickets 1–39, cerrada). Cada ticket se 
   (nunca durante una partida, cada 3 completadas, 3 min entre interstitials, nada en los primeros
   2 días o 3 partidas, respeta `adsRemoved`). Extender `Meta` con `completedSinceAd`,
   `lastInterstitialAt` y `adsRemoved` (migración de meta v3; la v2 agregó el cupo diario de pistas).
-- **52. AdMob.** Hecho para rewarded: `services/ads/admobAdService.ts`, activo solo con
-  `VITE_ADS_MODE=admob`; sin esa variable se usa el mock. `VITE_ADMOB_REWARDED_ID` para la unidad
-  real (si falta, la de prueba de Google). Falta: App ID real en `admob_app_id`, banner e
-  interstitial. Las fallas nunca bloquean el flujo.
+- **52. AdMob.** Fuera de la primera publicación: no hay SDK ni unidades. Al retomarlo, agregar
+  `@capacitor-community/admob`, el App ID y `VITE_ADMOB_REWARDED_ID`. Las fallas nunca bloquean el
+  flujo. Faltan banner e interstitial.
 - **53. UMP.** Formulario de consentimiento al primer arranque y entrada "Privacidad" en Ajustes.
   Sin consentimiento, solo anuncios no personalizados (hoy AdMob pide siempre `npa`).
 - **54. Banner.** Espacio reservado de alto fijo para evitar saltos de layout. Nunca en Juego.
 - **55. Interstitial.** `runtime.afterVictory` consulta `AdPolicy`; se dispara al tocar "Siguiente
   puzzle", "Colección" o "Inicio" en Victoria, no al entrar (el revelado se ve completo).
-- **56. Rewarded.** Hecho. 3 pistas gratis por día compartidas entre puzzles; después, el diálogo
-  "Sin pistas gratis" ofrece "Ver anuncio" y aplica `hint` con `isRewarded`. En "Perdiste", "Ver
-  anuncio y seguir" despacha `continue`. Si el anuncio se cierra o falla, no se otorga nada.
+- **56. Rewarded.** Aplazado. Hoy, sin pistas gratis el diálogo solo avisa que vuelven mañana, y
+  "Perdiste" solo ofrece reintentar. El reducer sigue aceptando `hint { isRewarded: true }` y
+  `continue` para cuando vuelvan los anuncios.
 - **57. Analytics.** Implementación Firebase (o similar) de `AnalyticsService`; mapear los eventos de
   `toAnalyticsEvent` más `rewarded_*`, `interstitial_shown` y `session_length`.
 - **58. Quitar anuncios.** Compra no consumible; activa `adsRemoved` y oculta banner e interstitial.

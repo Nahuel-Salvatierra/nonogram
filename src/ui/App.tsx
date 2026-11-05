@@ -1,5 +1,4 @@
 import { useThemeSync } from '@app/hooks/useThemeSync'
-import { MockAdDialog } from '@ui/components/MockAdDialog/MockAdDialog'
 import { ROUTES } from '@ui/routes'
 import { CollectionScreen } from '@ui/screens/CollectionScreen/CollectionScreen'
 import { GameScreen } from '@ui/screens/GameScreen/GameScreen'
@@ -23,7 +22,6 @@ export function AppRoutes() {
         <Route path={ROUTES.howToPlay} element={<HowToPlayScreen />} />
         <Route path="*" element={<Navigate to={ROUTES.home} replace />} />
       </Routes>
-      <MockAdDialog />
     </>
   )
 }

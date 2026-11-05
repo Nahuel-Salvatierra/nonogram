@@ -1,4 +1,4 @@
-import type { Difficulty, RewardedPlacement, SizeId, Theme, Tool } from '@app/catalog'
+import type { Difficulty, SizeId, Theme, Tool } from '@app/catalog'
 import type { Axis, CellState } from '@core/engine/grid'
 
 const pluralize = (count: number, singular: string, plural: string): string =>
@@ -98,22 +98,9 @@ export const strings = {
     line: (axis: Axis, index: number, count: number) =>
       `${LINE_NAMES[axis]} ${index + 1}: ${pluralize(count, 'celda se deduce', 'celdas se deducen')} solo con sus pistas.`,
     reveal: 'Te revelamos una celda de la línea más restringida.',
-  },
-  ads: {
-    hintTitle: 'Sin pistas gratis',
-    hintMessage: (count: number) =>
-      `Ya usaste las ${count} pistas gratis de hoy. Mirá un anuncio para conseguir una más.`,
-    later: 'Ahora no',
-    watch: 'Ver anuncio',
-    watching: 'Cargando anuncio…',
-    unavailable: 'No hay anuncios disponibles ahora. Probá más tarde.',
-    mockTitle: 'Anuncio de prueba',
-    mockMessages: {
-      extraHint: 'Anuncio simulado a cambio de una pista extra.',
-      continueAfterLoss: 'Anuncio simulado para seguir con el mismo tablero.',
-    } satisfies Record<RewardedPlacement, string>,
-    mockFinish: 'Terminar de ver',
-    mockClose: 'Cerrar sin terminar',
+    exhaustedTitle: 'Sin pistas gratis',
+    exhaustedMessage: (count: number) =>
+      `Ya usaste las ${count} pistas gratis de hoy. Mañana vas a tener ${count} más.`,
   },
   tips: [
     'Las pistas dicen cuántas celdas seguidas hay que rellenar. Empezá por las líneas con un 5.',
@@ -133,9 +120,7 @@ export const strings = {
   },
   lost: {
     title: 'Perdiste',
-    message: (limit: number) =>
-      `Cometiste ${limit} errores. Mirá un anuncio para seguir con este tablero o reintentá desde el principio.`,
-    continue: 'Ver anuncio y seguir',
+    message: (limit: number) => `Cometiste ${limit} errores. Reintentá desde el principio.`,
     retry: 'Reintentar',
     back: 'Volver',
   },
